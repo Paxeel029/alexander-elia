@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#eef1f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f151d" media="(prefers-color-scheme: dark)">
+<title>Alexander E. | Python automation and bots</title>
+<meta name="description" content="Python scripts for scraping, data cleaning and Telegram bots. Small, tested tools with clear communication.">
+<style>
+  :root {
+    --paper: #eef1f5;
+    --surface: #ffffff;
+    --ink: #121b26;
+    --slate: #4f5b6d;
+    --rule: #c9d1dc;
+    --mark: #ffd84d;
+    --mark-ink: #121b26;
+    --signal: #1b4dff;
+    --signal-ink: #ffffff;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Charter, Georgia, serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0f151d;
+      --surface: #161e29;
+      --ink: #e7ecf3;
+      --slate: #a3afc0;
+      --rule: #2b384a;
+      --signal: #8aa6ff;
+      --signal-ink: #0f151d;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; color-scheme: light dark; }
+  :target, h1, h2 { scroll-margin-top: 1rem; }
+  a, button { touch-action: manipulation; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 1.0625rem/1.65 var(--serif);
+  }
+  .page { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
+  a { color: var(--signal); text-underline-offset: 3px; }
+  :focus-visible { outline: 3px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
+
+  .skip {
+    position: absolute; left: 1rem; top: -4rem; padding: .6rem 1rem;
+    background: var(--ink); color: var(--paper); z-index: 10;
+  }
+  .skip:focus { top: 1rem; }
+
+  .bar {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 1.5rem 0; border-bottom: 1px solid var(--rule);
+  }
+  .bar-name { font-weight: 700; color: var(--ink); text-decoration: none; }
+
+  .hero { padding: 4rem 0 2.5rem; }
+  h1 {
+    font-size: clamp(2.1rem, 6.2vw, 3.4rem);
+    line-height: 1.08; letter-spacing: -.02em;
+    margin: 0 0 1.25rem; font-weight: 700; text-wrap: balance;
+  }
+  .lead { color: var(--slate); max-width: 38rem; margin: 0 0 1.75rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; min-height: 2.75rem;
+    padding: 0 1.25rem; border-radius: 4px; border: 2px solid var(--signal);
+    font: 600 1rem var(--serif); text-decoration: none; cursor: pointer;
+    background: var(--signal); color: var(--signal-ink);
+  }
+  .btn-quiet { background: transparent; color: var(--signal); }
+  .btn:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .btn-quiet:hover { background: var(--signal); border-color: var(--signal); color: var(--signal-ink); }
+  a:hover { text-decoration-thickness: 2px; }
+
+  h2 { font-size: 1.5rem; line-height: 1.2; margin: 0 0 .5rem; letter-spacing: -.01em; }
+  .block { padding: 2.5rem 0; border-top: 1px solid var(--rule); }
+  .note { color: var(--slate); font-size: .95rem; margin: 0 0 1.25rem; max-width: 38rem; }
+
+  /* demo */
+  .demo-label { font-size: .9rem; color: var(--slate); margin: 1.5rem 0 .4rem; font-weight: 700; }
+  .table-scroll { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 34rem; font: .875rem/1.4 var(--mono); font-variant-numeric: tabular-nums; }
+  caption { position: absolute; left: -9999px; }
+  th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid var(--rule); white-space: pre; }
+  th { font-weight: 700; color: var(--slate); }
+  tr:last-child td { border-bottom: 0; }
+  td.fixed { position: relative; isolation: isolate; color: var(--mark-ink); }
+  td.fixed::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--mark); }
+  td.fixed.fresh::before { animation: reveal .35s ease-out backwards; animation-delay: calc(var(--i) * 90ms); }
+  tr.dup td { text-decoration: line-through; color: var(--slate); }
+  @keyframes reveal { from { opacity: 0; } }
+
+  .demo-actions { margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+  .status { margin: 0; font-weight: 700; }
+  .out[hidden] { display: none; }
+  .note-after { margin-top: .75rem; }
+
+  /* projects */
+  .rows { list-style: none; margin: 1.25rem 0 0; padding: 0; border-top: 1px solid var(--rule); }
+  .rows li { padding: 1.1rem 0; border-bottom: 1px solid var(--rule); }
+  .rows h3 { font-size: 1.1rem; margin: 0 0 .15rem; }
+  .rows p { margin: 0; color: var(--slate); max-width: 38rem; }
+  .state { font-weight: 700; color: var(--ink); }
+
+  dl { margin: 1.25rem 0 0; }
+  dt { font-weight: 700; margin-top: 1rem; }
+  dd { margin: 0; color: var(--slate); max-width: 38rem; }
+  ol.steps { margin: 1.25rem 0 0; padding-left: 1.25rem; max-width: 38rem; }
+  ol.steps li { margin-bottom: .6rem; padding-left: .25rem; }
+
+  footer { padding: 2rem 0 3.5rem; border-top: 1px solid var(--rule); color: var(--slate); font-size: .95rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    td.fixed.fresh::before { animation: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+  <header class="bar">
+    <a class="bar-name" href="#top" translate="no">Alexander&nbsp;E.</a>
+    <!-- TODO: replace with the real Fiverr gig URL -->
+    <a href="https://www.fiverr.com/alexander_elia">Fiverr profile</a>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="title">
+      <h1 id="title">Python scripts for the computer work you repeat every week</h1>
+      <p class="lead">I’m Alexander, a computer science student in Italy. I build small tools that collect data from websites, clean messy files and run Telegram bots, and I explain how each one works.</p>
+      <div class="actions">
+        <a class="btn" href="https://www.fiverr.com/alexander_elia">Message me on Fiverr</a>
+        <a class="btn btn-quiet" href="#demo">Try the demo</a>
+      </div>
+    </section>
+
+    <section class="block" id="demo" aria-labelledby="demo-title">
+      <h2 id="demo-title">Clean a messy order list</h2>
+      <p class="note">Sample data, no real customers. The script runs in your browser and does the kind of cleaning my Python tools do: fixes names, amounts, dates and emails, and removes duplicates.</p>
+
+      <p class="demo-label" id="in-label">Before: as exported</p>
+      <div class="table-scroll" role="region" aria-labelledby="in-label" tabindex="0">
+        <table id="messy" translate="no"></table>
+      </div>
+
+      <div class="demo-actions">
+        <button class="btn" id="run" type="button">Run the cleaner</button>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="out" id="out" hidden>
+        <p class="demo-label" id="out-label">After: yellow cells were changed</p>
+        <div class="table-scroll" role="region" aria-labelledby="out-label" tabindex="0">
+          <table id="clean" translate="no"></table>
+        </div>
+        <p class="note note-after">Dates like 03/10/2026 are read as day/month/year. A real job starts by agreeing on rules like this one.</p>
+      </div>
+    </section>
+
+    <section class="block" id="projects" aria-labelledby="projects-title">
+      <h2 id="projects-title">Projects</h2>
+      <p class="note">Three projects are being built. Each one will have its code, a README and example output on GitHub.</p>
+      <ul class="rows">
+        <li>
+          <h3><a href="https://github.com/Paxeel029/book-scraper">Web scraper with data cleaning</a></h3>
+          <p><span class="state">Published on GitHub.</span> Collects 1000 products from a practice shop site and exports a clean CSV that opens in Excel. Standard library only, with tests.</p>
+        </li>
+        <li>
+          <h3><a href="https://github.com/Paxeel029/pdf-invoice-extractor">PDF invoice extractor</a></h3>
+          <p><span class="state">Published on GitHub.</span> Reads PDF invoices, normalises dates and amounts into one CSV, and flags totals that do not add up. Uses pypdf, with tests.</p>
+        </li>
+        <li>
+          <h3>Telegram bot with optional AI replies</h3>
+          <p><span class="state">Planned.</span> Answers messages, with a demo mode that needs no paid key.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="block" id="services" aria-labelledby="services-title">
+      <h2 id="services-title">What I can build for you</h2>
+      <dl>
+        <dt>Data scraping and cleaning</dt>
+        <dd>Collect public data, fix inconsistent formats and deliver CSV, Excel or Google Sheets.</dd>
+        <dt>Workflow scripts</dt>
+        <dd>Rename files, merge reports, move data between tools on a schedule.</dd>
+        <dt>Telegram and Discord bots</dt>
+        <dd>Commands, reminders and replies for your community or team.</dd>
+        <dt>API integrations</dt>
+        <dd>Connect your tools to each other, including AI APIs.</dd>
+      </dl>
+    </section>
+
+    <section class="block" id="process" aria-labelledby="process-title">
+      <h2 id="process-title">How a job works</h2>
+      <ol class="steps">
+        <li>You describe the task and send a sample of your data.</li>
+        <li>I tell you whether it can be done and what I need to know.</li>
+        <li>You get tested code, a short README and a walkthrough of how to run it.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    Based in Italy. I work in English and Italian.
+    <span id="year"></span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var SAMPLE = [
+    ['  maria ROSSI ', '€ 12,50', '03/10/2026', 'maria@example.com'],
+    ['John   smith', '12.5 EUR', '2026-10-03', 'John.Smith@Example.com '],
+    ['maria rossi', '€12,50', '3 Oct 2026', 'MARIA@example.com'],
+    ['LUCA bianchi', '$ 8', '04/10/2026', 'luca@example.com']
+  ];
+  var HEAD = ['Name', 'Amount', 'Date', 'Email'];
+  var MONTHS = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function cleanName(s) {
+    return s.trim().replace(/\s+/g, ' ').toLowerCase().replace(/(^|\s)\S/g, function (c) { return c.toUpperCase(); });
+  }
+  function cleanAmount(s) {
+    var cur = /€|eur/i.test(s) ? 'EUR' : /\$|usd/i.test(s) ? 'USD' : '';
+    var n = s.replace(/[^0-9.,]/g, '');
+    if (n.indexOf(',') > -1 && n.indexOf('.') === -1) n = n.replace(',', '.');
+    return parseFloat(n).toFixed(2) + (cur ? ' ' + cur : '');
+  }
+  function cleanDate(s) {
+    s = s.trim();
+    var m;
+    if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/))) return s;
+    if ((m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))) return m[3] + '-' + pad(m[2]) + '-' + pad(m[1]);
+    if ((m = s.match(/^(\d{1,2}) ([A-Za-z]{3})[a-z]* (\d{4})$/)) && MONTHS[m[2].toLowerCase()]) {
+      return m[3] + '-' + pad(MONTHS[m[2].toLowerCase()]) + '-' + pad(m[1]);
+    }
+    return s;
+  }
+  function cleanEmail(s) { return s.trim().toLowerCase(); }
+
+  function render(table, rows, opts) {
+    table.textContent = '';
+    var cap = document.createElement('caption');
+    cap.textContent = opts.caption;
+    table.appendChild(cap);
+    var thead = table.createTHead().insertRow();
+    HEAD.forEach(function (h) {
+      var th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = h;
+      thead.appendChild(th);
+    });
+    var body = table.createTBody();
+    var i = 0;
+    rows.forEach(function (r) {
+      var tr = body.insertRow();
+      if (r.dup) tr.className = 'dup';
+      r.cells.forEach(function (c, idx) {
+        var td = tr.insertCell();
+        td.textContent = c;
+        if (r.changed && r.changed[idx]) {
+          td.className = 'fixed fresh';
+          td.style.setProperty('--i', i++);
+        }
+      });
+    });
+  }
+
+  var messy = document.getElementById('messy');
+  var clean = document.getElementById('clean');
+  var out = document.getElementById('out');
+  var status = document.getElementById('status');
+  var run = document.getElementById('run');
+  var ran = false;
+
+  render(messy, SAMPLE.map(function (c) { return { cells: c }; }), { caption: 'Messy order list' });
+
+  function doClean() {
+    var seen = {}, fixed = 0, dups = 0;
+    var rows = SAMPLE.map(function (r) {
+      var cells = [cleanName(r[0]), cleanAmount(r[1]), cleanDate(r[2]), cleanEmail(r[3])];
+      var dup = !!seen[cells[3]];
+      seen[cells[3]] = true;
+      var changed = cells.map(function (c, i) { return c !== r[i]; });
+      if (dup) { dups++; changed = null; } else { fixed += changed.filter(Boolean).length; }
+      return { cells: dup ? r : cells, changed: changed, dup: dup };
+    });
+    render(clean, rows, { caption: 'Cleaned order list' });
+    out.hidden = false;
+    status.textContent = fixed + ' cells fixed, ' + dups + ' duplicate row struck through.';
+  }
+
+  run.addEventListener('click', function () {
+    if (!ran) { doClean(); run.textContent = 'Reset the sample'; ran = true; }
+    else { out.hidden = true; status.textContent = ''; run.textContent = 'Run the cleaner'; ran = false; }
+  });
+
+  document.getElementById('year').textContent = '© ' + new Date().getFullYear() + ' Alexander E.';
+})();
+</script>
+</body>
+</html>
